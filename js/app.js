@@ -55,7 +55,7 @@ const renderRooms = () => {
   const keyword = document.querySelector('#name-search').value.trim();
   const shown = STUDYROOMS.filter(r =>
     (floor === 'all' || r.floor === Number(floor)) &&
-    (status === 'all' || r.status === status)&&
+    (status === 'all' || r.status === status) &&
     (keyword === '' || r.name.includes(keyword))
   );
   const list = document.querySelector('#room-list');
@@ -67,20 +67,51 @@ const renderRooms = () => {
   shown.forEach(r => {
     list.insertAdjacentHTML('beforeend', `
       <li class="list-group-item">
-        <span>${r.name} · ${r.building}${r.floor}层 · 空余${r.seats - r.occupied}座</span>
+        <span class="room-name" data-name="${r.name}">${r.name}</span> · ${r.building}${r.floor}层 · 空余${r.seats - r.occupied}座
         <span class="badge ${badgeClass[r.status]}">${r.status} · ${r.hours}</span>
       </li>
     `);
   });
 };
+document.querySelector('#room-list').addEventListener('click', (e) => {
+  const name = e.target.dataset.name;
+  if (name) highlightRoom(name);
+});
 
 document.querySelector('#floor-filter').addEventListener('change', renderRooms);
 document.querySelector('#status-filter').addEventListener('change', renderRooms);
 document.querySelector('#name-search').addEventListener('input', renderRooms);
 
 // ── 使用统计图表（课堂六fetch骨架的复用：四状态齐全）──
+let selectedRoom = null;
+
+const highlightRoom = (name) => {
+  selectedRoom = (selectedRoom === name) ? null : name; // 再点同一个 = 取消
+  applyHighlight();
+};
+
+const applyHighlight = () => {
+  if (chartData === null || chart === null) return;
+  chart.setOption({
+    series: [{
+      data: chartData.rooms.map(r => ({
+        value: r.seats - r.occupied,
+        itemStyle: { color: r.name === selectedRoom ? '#f59e0b' : '#0d6efd' }
+      }))
+    }]
+  });
+  rateChart.setOption({
+    series: [{
+      data: chartData.rooms.map(r => ({
+        value: Math.round(r.occupied / r.seats * 100),
+        itemStyle: { color: r.name === selectedRoom ? '#f59e0b' : '#198754' }
+      }))
+    }]
+  });
+};
 let chart = null;
-let rateChart = null
+let rateChart = null;
+let chartData = null;
 const renderChart = (data) => {
   if (chart === null) {
     chart = echarts.init(document.querySelector('#usage-chart'));
@@ -102,25 +133,25 @@ const renderChart = (data) => {
       itemStyle: { color: '#0d6efd' }
     }]
   });
-  if (rateChart === null ) {
-    rateChart = echarts. init ( document . querySelector ( '#rate-chart' ));
+  if (rateChart === null) {
+    rateChart = echarts.init(document.querySelector('#rate-chart'));
   }
   rateChart.setOption({
-    title:{text:"自习室使用率(已用/总座位)",left:"center"},
-    tooltip : { trigger : 'axis' , formatter : '{b}: {c}%' },
-    grid : { left : 56 , right : 24 , bottom : 90 },
-    xAxis : {
-      type : 'category' ,
-      data : data. rooms . map ( r => r. name ),
-      axisLabel : { rotate : 38 , interval : 0 , fontSize : 11 }
+    title: { text: '自习室使用率（已用/总座位）', left: 'center' },
+    tooltip: { trigger: 'axis', formatter: '{b}: {c}%' },
+    grid: { left: 56, right: 24, bottom: 90 },
+    xAxis: {
+      type: 'category',
+      data: data.rooms.map(r => r.name),
+      axisLabel: { rotate: 38, interval: 0, fontSize: 11 }
     },
-    yAxis : { type : 'value' , name : '%' , max : 100 },
-    series : [{
-      name : '使用率' ,
-      type : 'bar' ,
-      data : data. rooms . map ( r => Math . round (r. occupied / r. seats * 100 )),
-      itemStyle : { color : '#198754' }
-  }]
+    yAxis: { type: 'value', name: '%', max: 100 },
+    series: [{
+      name: '使用率',
+      type: 'bar',
+      data: data.rooms.map(r => Math.round(r.occupied / r.seats * 100)),
+      itemStyle: { color: '#198754' }
+    }]
   });
 };
 
@@ -138,6 +169,7 @@ const loadChart = async () => {
       return;
     }
     statusEl.style.display = 'none';
+    chartData = data; // 数据到手先存全量引用，点击高亮时按名字对位
     renderChart(data);
   } catch (error) {
     statusEl.textContent = '加载失败：' + error.message;

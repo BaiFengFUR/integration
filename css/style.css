@@ -13,3 +13,4 @@
   flex-wrap: wrap;
   gap: 4px;
 }
+.room-name { cursor : pointer; }
