@@ -1,3 +1,4 @@
+/* 自定义样式放在Bootstrap之后引入，保证可覆盖 */
 #usage-chart {
   background: #fff;
   border: 1px solid #dee2e6;
