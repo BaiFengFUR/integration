@@ -52,9 +52,11 @@ const badgeClass = { '开放': 'text-bg-success', '闭馆': 'text-bg-secondary',
 const renderRooms = () => {
   const floor = document.querySelector('#floor-filter').value;
   const status = document.querySelector('#status-filter').value;
+  const keyword = document.querySelector('#name-search').value.trim();
   const shown = STUDYROOMS.filter(r =>
     (floor === 'all' || r.floor === Number(floor)) &&
-    (status === 'all' || r.status === status)
+    (status === 'all' || r.status === status)&&
+    (keyword === '' || r.name.includes(keyword))
   );
   const list = document.querySelector('#room-list');
   list.innerHTML = '';
@@ -74,10 +76,10 @@ const renderRooms = () => {
 
 document.querySelector('#floor-filter').addEventListener('change', renderRooms);
 document.querySelector('#status-filter').addEventListener('change', renderRooms);
+document.querySelector('#name-search').addEventListener('input', renderRooms);
 
 // ── 使用统计图表（课堂六fetch骨架的复用：四状态齐全）──
 let chart = null;
-
 const renderChart = (data) => {
   if (chart === null) {
     chart = echarts.init(document.querySelector('#usage-chart'));
