@@ -80,6 +80,7 @@ document.querySelector('#name-search').addEventListener('input', renderRooms);
 
 // ── 使用统计图表（课堂六fetch骨架的复用：四状态齐全）──
 let chart = null;
+let rateChart = null
 const renderChart = (data) => {
   if (chart === null) {
     chart = echarts.init(document.querySelector('#usage-chart'));
@@ -100,6 +101,26 @@ const renderChart = (data) => {
       data: data.rooms.map(r => r.seats - r.occupied),
       itemStyle: { color: '#0d6efd' }
     }]
+  });
+  if (rateChart === null ) {
+    rateChart = echarts. init ( document . querySelector ( '#rate-chart' ));
+  }
+  rateChart.setOption({
+    title:{text:"自习室使用率(已用/总座位)",left:"center"},
+    tooltip : { trigger : 'axis' , formatter : '{b}: {c}%' },
+    grid : { left : 56 , right : 24 , bottom : 90 },
+    xAxis : {
+      type : 'category' ,
+      data : data. rooms . map ( r => r. name ),
+      axisLabel : { rotate : 38 , interval : 0 , fontSize : 11 }
+    },
+    yAxis : { type : 'value' , name : '%' , max : 100 },
+    series : [{
+      name : '使用率' ,
+      type : 'bar' ,
+      data : data. rooms . map ( r => Math . round (r. occupied / r. seats * 100 )),
+      itemStyle : { color : '#198754' }
+  }]
   });
 };
 
@@ -124,7 +145,7 @@ const loadChart = async () => {
 };
 
 window.addEventListener('resize', () => {
-  if (chart) chart.resize();
+  [chart, rateChart].forEach(c => { if (c) c.resize(); });
 });
 
 renderSummary();
