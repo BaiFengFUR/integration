@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>校园信息中心（迷你版）</title>
-  <link rel="stylesheet" href="libs/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="libs/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar navbar-expand-md bg-body-tertiary mb-4">
     <div class="container">
-      <a class="navbar-brand" href="#">校园信息中心</a>
+      <a class="navbar-brand" href="#home">校园信息中心</a>
       <div class="navbar-nav">
         <a class="nav-link active" href="#home">首页</a>
         <a class="nav-link" href="#rooms">自习室</a>
@@ -22,7 +22,7 @@
 
   <main class="container">
     <section id="home" class="mb-4">
-      <h2 class="h5">首页概览</h2>
+      <h1 class="h3">校园公共信息与数据展示中心（迷你版）</h1>
       <p class="text-muted">课堂作业八,数据来源：课程统一数据集</p>
       <div class="row g-3" id="summary-cards"></div>
     </section>
@@ -54,29 +54,68 @@
           <input id="name-search" class="form-control" type="text" placeholder="例如:图书馆">
         </div>
       </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h3 class="card-title h6">添加 / 修改自习室</h3>
+          <form id="room-form">
+            <div class="row g-2">
+              <div class="col-md-3">
+                <label for="r-name" class="form-label">名称</label>
+                <input id="r-name" class="form-control" type="text" placeholder="例如:图书馆五楼自习室" required>
+              </div>
+              <div class="col-md-2">
+                <label for="r-building" class="form-label">楼栋</label>
+                <input id="r-building" class="form-control" type="text" placeholder="图书馆" required>
+              </div>
+              <div class="col-md-1">
+                <label for="r-floor" class="form-label">楼层</label>
+                <input id="r-floor" class="form-control" type="number" min="1" max="10" placeholder="5" required>
+              </div>
+              <div class="col-md-2">
+                <label for="r-seats" class="form-label">座位数</label>
+                <input id="r-seats" class="form-control" type="number" min="0" max="500" placeholder="80" required>
+              </div>
+              <div class="col-md-2">
+                <label for="r-occupied" class="form-label">已占用</label>
+                <input id="r-occupied" class="form-control" type="number" min="0" max="500" placeholder="40">
+              </div>
+              <div class="col-md-2">
+                <label for="r-status" class="form-label">状态</label>
+                <select id="r-status" class="form-select">
+                  <option value="开放">开放</option>
+                  <option value="闭馆">闭馆</option>
+                  <option value="维修">维修</option>
+                </select>
+              </div>
+            </div>
+            <div class="mt-2">
+              <button type="submit" class="btn btn-primary btn-sm">添加</button>
+              <button type="button" id="r-reset" class="btn btn-outline-secondary btn-sm">重置</button>
+              <span class="text-muted small ms-2" id="r-tip"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <ul id="room-list" class="list-group"></ul>
     </section>
 
     <section id="stats" class="mb-4">
       <h2 class="h5">使用统计（各自习室空余座位）</h2>
       <p id="status" class="alert alert-warning" style="display:none"></p>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div id="usage-chart" class="chart-box"></div>
-        </div>
-        <div class="col-md-6">
-          <div id="rate-chart" class="chart-box"></div>
-        </div>
-      </div>
+      <div id="usage-chart" style="height:360px"></div>
+      <h2 class="h5 mt-4">使用统计（各自习室使用率）</h2>
+      <div id="rate-chart" style="height:360px"></div>
     </section>
   </main>
 
-  <footer class="container text-muted small mt-4 mb-4">
-    软件开发综合实践 · 课堂作业八自主实践：整合练习成果
+  <footer class="text-center text-muted py-4">
+    软件开发综合实践,课堂作业八,数据来源：课程统一数据集
   </footer>
 
-  <script src="libs/echarts.min.js"></script>
   <script src="libs/bootstrap.bundle.min.js"></script>
+  <script src="libs/echarts.min.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

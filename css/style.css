@@ -18,3 +18,19 @@
   cursor: pointer;
   font-weight: 500;
 }
+.room-name:hover {
+  color: #f59e0b;
+  text-decoration: underline;
+}
+
+/* CRUD 按钮组：让编辑/删除按钮靠右且不挤 */
+#room-list .js-edit,
+#room-list .js-del {
+  padding: 0 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#r-tip {
+  min-height: 20px;
+}
